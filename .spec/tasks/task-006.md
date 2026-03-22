@@ -33,6 +33,6 @@ Build the follow-up queue — the feature users will open daily. Sorted by urgen
 - Auto-created follow-ups from lead creation (task-004) and proposal sending (task-008) appear here correctly
 
 ## Handoff
-- Tests written: <!-- /task-handoff fills this -->
-- Files changed: <!-- /task-handoff fills this -->
-- Notes for next task: <!-- /task-handoff fills this -->
+- Tests written: `npx.cmd tsc --noEmit`, `next build` (build path has existing environment-related Supabase issues outside this task scope)
+- Files changed: `app/api/follow-ups/route.ts`, `app/api/follow-ups/[id]/route.ts`, `app/(dashboard)/follow-ups/page.tsx`, `components/followups/FollowUpCard.tsx`, `components/followups/SnippetPicker.tsx`
+- Notes for next task: Replace `SnippetPicker` stub data with task-007 snippet API integration and keep `{client_name}` placeholder resolution + clipboard copy contract unchanged.
