@@ -30,7 +30,22 @@ Initialise the Next.js 14 project with full TypeScript + Tailwind + shadcn/ui se
 - Authenticated user can register, log in, and session persists on refresh
 - All 9 tables exist in Supabase with RLS enabled — a query with a different user_id returns 0 rows
 
-## Handoff
-- Tests written: <!-- /task-handoff fills this -->
-- Files changed: <!-- /task-handoff fills this -->
-- Notes for next task: <!-- /task-handoff fills this -->
+## Handoff — What Was Done
+- Scaffolded Next.js 14 + TypeScript + Tailwind project structure and installed Supabase/shadcn dependencies.
+- Implemented Supabase browser/server clients, auth middleware redirect for `/dashboard`, and login/register UI routes.
+- Added full `lib/db/schema.sql` with 9 tables + RLS policies and created shared DB types in `types/index.ts`.
+
+## Handoff — Patterns Learned
+- Keep Supabase auth pages in a dynamic route group (`app/(auth)/layout.tsx`) to avoid static prerender issues in build.
+- Use `(select auth.uid())` in RLS policies for better planner behavior and consistency.
+- If interactive CLI setup is interrupted, validate for accidental file concatenation before continuing.
+
+## Handoff — Files Changed
+- `package.json`, `package-lock.json`, `.gitignore`
+- `app/layout.tsx`, `app/page.tsx`, `app/globals.css`, `app/(auth)/layout.tsx`, `app/(auth)/login/page.tsx`, `app/(auth)/register/page.tsx`, `app/dashboard/page.tsx`
+- `components.json`, `components/ui/button.tsx`, `components/ui/card.tsx`, `components/ui/input.tsx`, `components/ui/label.tsx`
+- `lib/utils.ts`, `lib/supabase/client.ts`, `lib/supabase/server.ts`, `lib/db/schema.sql`
+- `middleware.ts`, `tailwind.config.ts`, `types/index.ts`, `bug-log.md`
+
+## Status
+COMPLETE

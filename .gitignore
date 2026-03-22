@@ -29,3 +29,6 @@ out/
 # Build
 dist/
 build/
+
+# TypeScript cache
+*.tsbuildinfo
