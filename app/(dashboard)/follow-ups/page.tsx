@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { FollowUpCard, type FollowUpItem } from "@/components/followups/FollowUpCard";
-import { SnippetPicker } from "@/components/followups/SnippetPicker";
+import { SnippetPicker } from "@/components/snippets/SnippetPicker";
 import { Button } from "@/components/ui/button";
 
 type FollowUpStatus = "waiting" | "due" | "replied" | "ghosted";
@@ -217,9 +217,9 @@ export default function FollowUpsPage() {
 
       <SnippetPicker
         open={snippetTarget !== null}
-        contactName={snippetTarget?.display_name ?? "there"}
+        clientName={snippetTarget?.display_name ?? "there"}
         onClose={() => setSnippetTarget(null)}
-        onSnippetSelected={handleSnippetSelected}
+        onInsert={handleSnippetSelected}
       />
     </section>
   );

@@ -31,6 +31,9 @@ Build the snippets library and a reusable snippet picker component. Snippets sup
 - SnippetPicker component is reusable (accepts `clientName` and `onInsert` props)
 
 ## Handoff
-- Tests written: <!-- /task-handoff fills this -->
-- Files changed: <!-- /task-handoff fills this -->
-- Notes for next task: <!-- /task-handoff fills this -->
+- Tests written: `npx.cmd tsc --noEmit` (pass), `npm.cmd run build` (fails in this environment with intermittent existing Next.js/Supabase environment build issues outside snippets scope), `npm.cmd run lint` (not configured non-interactively; Next.js prompts ESLint setup), tests script not present in `package.json`.
+- Files changed: `app/api/snippets/route.ts`, `app/api/snippets/[id]/route.ts`, `app/(dashboard)/snippets/page.tsx`, `components/snippets/SnippetPicker.tsx`, `components/followups/SnippetPicker.tsx`, `app/(dashboard)/follow-ups/page.tsx`.
+- Notes for next task: Proposal composer (task-008) can reuse `components/snippets/SnippetPicker.tsx` directly via `clientName` and `onInsert`; snippet picker now loads real snippets from `/api/snippets` and resolves `{client_name}` before insert/copy.
+
+## Status
+COMPLETE
