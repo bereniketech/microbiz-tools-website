@@ -21,6 +21,7 @@ create table if not exists public.clients (
   phone text,
   company_name text,
   notes text,
+  last_contact_at timestamptz,
   created_at timestamptz not null default timezone('utc'::text, now()),
   updated_at timestamptz not null default timezone('utc'::text, now())
 );
@@ -45,6 +46,42 @@ for delete using ((select auth.uid()) = user_id);
 drop trigger if exists trg_clients_updated_at on public.clients;
 create trigger trg_clients_updated_at
 before update on public.clients
+for each row execute function public.set_updated_at();
+
+-- 1b) client_activities
+create table if not exists public.client_activities (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  client_id uuid not null references public.clients(id) on delete cascade,
+  type text not null,
+  message text not null,
+  metadata jsonb,
+  created_at timestamptz not null default timezone('utc'::text, now()),
+  updated_at timestamptz not null default timezone('utc'::text, now())
+);
+
+create index if not exists idx_client_activities_user_id on public.client_activities(user_id);
+create index if not exists idx_client_activities_client_id on public.client_activities(client_id);
+create index if not exists idx_client_activities_created_at on public.client_activities(created_at);
+
+alter table public.client_activities enable row level security;
+
+create policy "client_activities_select_own" on public.client_activities
+for select using ((select auth.uid()) = user_id);
+
+create policy "client_activities_insert_own" on public.client_activities
+for insert with check ((select auth.uid()) = user_id);
+
+create policy "client_activities_update_own" on public.client_activities
+for update using ((select auth.uid()) = user_id)
+with check ((select auth.uid()) = user_id);
+
+create policy "client_activities_delete_own" on public.client_activities
+for delete using ((select auth.uid()) = user_id);
+
+drop trigger if exists trg_client_activities_updated_at on public.client_activities;
+create trigger trg_client_activities_updated_at
+before update on public.client_activities
 for each row execute function public.set_updated_at();
 
 -- 2) leads

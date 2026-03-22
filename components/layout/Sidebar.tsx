@@ -15,7 +15,7 @@ export interface SidebarItem {
 
 export const sidebarItems: SidebarItem[] = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-  { label: "Leads & Clients", href: "/leads-clients", icon: Users },
+  { label: "Leads & Clients", href: "/leads", icon: Users },
   { label: "Follow-Ups", href: "/follow-ups", icon: MessageSquareText },
   { label: "Proposals", href: "/proposals", icon: FileText },
   { label: "Invoices", href: "/invoices", icon: ClipboardList },

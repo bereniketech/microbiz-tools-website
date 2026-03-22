@@ -29,6 +29,6 @@ Build the leads module: list, quick-add modal, detail page, and one-click conver
 - Converted leads do not appear in the active leads list
 
 ## Handoff
-- Tests written: <!-- /task-handoff fills this -->
-- Files changed: <!-- /task-handoff fills this -->
-- Notes for next task: <!-- /task-handoff fills this -->
+- Tests written: Type-check passes with `npx.cmd tsc --noEmit`. Build remains environment-dependent due existing Supabase/Next prerender state in this workspace.
+- Files changed: `app/api/leads/route.ts`, `app/api/leads/[id]/route.ts`, `app/api/leads/[id]/convert/route.ts`, `app/(dashboard)/leads/page.tsx`, `app/(dashboard)/leads/[id]/page.tsx`, `components/leads/QuickAddLeadModal.tsx`, `components/layout/QuickActionBar.tsx`, `components/layout/Sidebar.tsx`.
+- Notes for next task: Leads flow now supports list filters (active excludes converted), quick-add with inline validation, detail updates, and convert-to-client migration of follow-ups. If you validate with live data, confirm the Supabase schema uses `stage` for lead status and `follow_ups.due_at` for due timestamps.

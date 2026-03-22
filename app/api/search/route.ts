@@ -59,7 +59,7 @@ export async function GET(request: NextRequest) {
     id: client.id,
     title: client.name,
     subtitle: client.company_name ?? client.email,
-    href: "/leads-clients",
+    href: `/clients/${client.id}`,
   }));
 
   const proposals: SearchItem[] = (proposalsData ?? []).map((proposal) => ({

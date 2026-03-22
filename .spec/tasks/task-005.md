@@ -35,6 +35,6 @@ Build the most important screen — a single client profile page that shows all 
 - Timeline is sorted newest-first
 
 ## Handoff
-- Tests written: <!-- /task-handoff fills this -->
-- Files changed: <!-- /task-handoff fills this -->
-- Notes for next task: <!-- /task-handoff fills this -->
+- Tests written: Type-check passed with `npx.cmd tsc --noEmit`. Build compiles pages successfully but this workspace still shows intermittent Next.js `.next/server/*` ENOENT packaging failures after optimization.
+- Files changed: `lib/db/schema.sql`, `types/index.ts`, `app/api/clients/[id]/route.ts`, `app/(dashboard)/clients/[id]/page.tsx`, `app/api/leads/[id]/convert/route.ts`, `app/api/search/route.ts`.
+- Notes for next task: Client profile is available at `/clients/[id]` with contact editing, active deals, proposals, invoices, payments, tasks, follow-ups, cold-client badge, note capture, and newest-first activity timeline. Run the updated schema before testing note/timeline features (`clients.last_contact_at` and `client_activities` table/policies).

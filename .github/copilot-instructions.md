@@ -2,6 +2,7 @@
 
 ## Skills — Read These Files for Coding Standards
 When implementing tasks, read these files for detailed coding standards:
+- C:/Users/Hp/Desktop/Experiment/claude_kit/skills/integrations/copilot-autonomous-tasks/SKILL.md
 - C:/Users/Hp/Desktop/Experiment/claude_kit/skills/development/code-writing-software-development/SKILL.md
 - C:/Users/Hp/Desktop/Experiment/claude_kit/skills/core/continuous-learning/SKILL.md
 - C:/Users/Hp/Desktop/Experiment/claude_kit/skills/core/strategic-compact/SKILL.md

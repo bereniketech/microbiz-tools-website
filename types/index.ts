@@ -24,6 +24,18 @@ export interface Client {
   phone: string | null;
   company_name: string | null;
   notes: string | null;
+  last_contact_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ClientActivity {
+  id: UUID;
+  user_id: UUID;
+  client_id: UUID;
+  type: string;
+  message: string;
+  metadata: Record<string, unknown> | null;
   created_at: string;
   updated_at: string;
 }

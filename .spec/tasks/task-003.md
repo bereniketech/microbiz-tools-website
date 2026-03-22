@@ -35,6 +35,6 @@ Build the dashboard control centre — a single-request page showing today's pri
 - Empty states render when no data exists
 
 ## Handoff
-- Tests written: <!-- /task-handoff fills this -->
-- Files changed: <!-- /task-handoff fills this -->
-- Notes for next task: <!-- /task-handoff fills this -->
+- Tests written: Type-check (`npx.cmd tsc --noEmit`) passes. Build currently fails in this environment due missing/invalid Supabase env at prerender stage and intermittent Next.js `.next` cache state.
+- Files changed: `app/api/dashboard/route.ts`, `app/(dashboard)/page.tsx`, `components/dashboard/PrioritiesWidget.tsx`, `components/dashboard/PipelineWidget.tsx`, `components/dashboard/MoneyWidget.tsx`, `components/dashboard/QuickActions.tsx`, `app/globals.css`, `tailwind.config.ts`, `app/(dashboard)/layout.tsx`, `app/dashboard/layout.tsx`, `app/dashboard/page.tsx`
+- Notes for next task: Dashboard now fetches all widget data via a single `/api/dashboard` call and includes empty states for each widget. If build validation is required in CI/local, ensure valid `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` are available and run a clean build (`rmdir /s /q .next` before `npm.cmd run build`).
