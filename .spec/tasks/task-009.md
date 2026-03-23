@@ -34,6 +34,6 @@ Build the invoice system: line item builder with auto-totals, status tracking, m
 - Payment-check task appears in tasks list after invoice creation
 
 ## Handoff
-- Tests written: <!-- /task-handoff fills this -->
-- Files changed: <!-- /task-handoff fills this -->
-- Notes for next task: <!-- /task-handoff fills this -->
+- Tests written: `get_errors` on changed task-009 files; `npx.cmd tsc --noEmit`; `npm.cmd run build` (via task + terminal run)
+- Files changed: `app/api/invoices/route.ts`, `app/api/invoices/[id]/route.ts`, `app/api/invoices/[id]/pay/route.ts`, `app/api/invoices/defaults/route.ts`, `app/api/invoices/overdue-sync/route.ts`, `app/(dashboard)/invoices/page.tsx`, `app/(dashboard)/invoices/new/page.tsx`, `app/(dashboard)/invoices/[id]/page.tsx`, `components/dashboard/OverdueInvoiceSync.tsx`, `app/(dashboard)/page.tsx`, `app/api/dashboard/route.ts`, `app/(dashboard)/tasks/page.tsx`, `lib/invoice-schemas.ts`, `lib/db/schema.sql`, `types/index.ts`, `lib/utils/index.ts`, `lib/utils/pdf.tsx`, `package.json`, `package-lock.json`
+- Notes for next task: Invoice flow now auto-creates payment-check tasks on create and auto-closes matching task on mark-paid; overdue status is promoted by a background dashboard-triggered sync (`/api/invoices/overdue-sync`); invoice detail PDF generation uses `@react-pdf/renderer` template in `lib/utils/pdf.tsx`.

@@ -48,8 +48,6 @@ export async function GET() {
   monthStart.setDate(1);
   monthStart.setHours(0, 0, 0, 0);
 
-  const now = new Date().toISOString();
-
   const [followUpsResult, tasksResult, overdueInvoicesResult, leadsResult, paymentsResult, pendingResult] =
     await Promise.all([
       // Follow-ups due today (not completed)
@@ -70,13 +68,12 @@ export async function GET() {
         .gte("due_at", todayStart.toISOString())
         .lte("due_at", todayEnd.toISOString()),
 
-      // Overdue invoices (pending/sent, past due_date)
+      // Overdue invoices (already promoted by overdue sync endpoint)
       supabase
         .from("invoices")
         .select("id, invoice_number, total_amount, due_date")
         .eq("user_id", user.id)
-        .in("status", ["pending", "sent"])
-        .lt("due_date", now)
+        .eq("status", "overdue")
         .not("due_date", "is", null),
 
       // Leads by stage
@@ -94,7 +91,7 @@ export async function GET() {
         .from("invoices")
         .select("total_amount")
         .eq("user_id", user.id)
-        .in("status", ["pending", "sent"]),
+        .eq("status", "pending"),
     ]);
 
   // Pipeline counts

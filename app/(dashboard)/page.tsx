@@ -1,6 +1,7 @@
 import { headers } from "next/headers";
 
 import { MoneyWidget } from "@/components/dashboard/MoneyWidget";
+import { OverdueInvoiceSync } from "@/components/dashboard/OverdueInvoiceSync";
 import { PipelineWidget } from "@/components/dashboard/PipelineWidget";
 import { PrioritiesWidget } from "@/components/dashboard/PrioritiesWidget";
 import { QuickActions } from "@/components/dashboard/QuickActions";
@@ -36,6 +37,7 @@ export default async function DashboardPage() {
 
   return (
     <div className="flex flex-col gap-4">
+      <OverdueInvoiceSync />
       <h1 className="text-2xl font-semibold">Dashboard</h1>
       <PrioritiesWidget
         followUps={data.followUps}

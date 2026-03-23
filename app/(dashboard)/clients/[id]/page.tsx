@@ -7,6 +7,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { formatCurrency, getProposalPricingAmount } from "@/lib/proposals";
 import { cn } from "@/lib/utils";
 
 interface ClientRecord {
@@ -24,7 +25,7 @@ interface ProposalRecord {
   id: string;
   title: string;
   status: string;
-  pricing: number | null;
+  pricing: unknown;
   sent_at: string | null;
   created_at: string;
 }
@@ -355,7 +356,7 @@ export default function ClientProfilePage() {
                 <li key={proposal.id} className="rounded-md border p-3 text-sm">
                   <div className="flex items-center justify-between gap-2">
                     <p className="font-medium">{proposal.title}</p>
-                    <span className="text-muted-foreground">{proposal.pricing === null ? "-" : formatMoney(proposal.pricing)}</span>
+                    <span className="text-muted-foreground">{formatCurrency(getProposalPricingAmount(proposal.pricing))}</span>
                   </div>
                 </li>
               ))}

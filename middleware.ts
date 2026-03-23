@@ -49,8 +49,23 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const isDashboardRoute = request.nextUrl.pathname.startsWith("/dashboard");
-  if (isDashboardRoute && !user) {
+  const pathname = request.nextUrl.pathname;
+  const isPublicProposalView = pathname.startsWith("/proposals/view/");
+  const protectedPrefixes = [
+    "/dashboard",
+    "/leads-clients",
+    "/follow-ups",
+    "/proposals",
+    "/invoices",
+    "/tasks",
+    "/income",
+    "/snippets",
+    "/analytics",
+    "/settings",
+  ];
+  const isProtectedRoute = !isPublicProposalView && protectedPrefixes.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
+
+  if (isProtectedRoute && !user) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     url.searchParams.set("redirectedFrom", request.nextUrl.pathname);

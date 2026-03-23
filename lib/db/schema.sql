@@ -131,21 +131,69 @@ create table if not exists public.proposals (
   client_id uuid not null references public.clients(id) on delete cascade,
   lead_id uuid references public.leads(id) on delete set null,
   title text not null,
+  service_type text,
   problem text,
   solution text,
   scope text,
   timeline text,
-  pricing numeric(10,2),
+  pricing jsonb,
   status text not null default 'draft',
-  public_token text unique,
+  share_token text,
+  is_template boolean not null default false,
   sent_at timestamptz,
+  viewed_at timestamptz,
   accepted_at timestamptz,
   created_at timestamptz not null default timezone('utc'::text, now()),
   updated_at timestamptz not null default timezone('utc'::text, now())
 );
 
+alter table public.proposals add column if not exists service_type text;
+alter table public.proposals add column if not exists share_token text;
+alter table public.proposals add column if not exists is_template boolean not null default false;
+alter table public.proposals add column if not exists viewed_at timestamptz;
+
+do $$
+begin
+  if exists (
+    select 1
+    from information_schema.columns
+    where table_schema = 'public'
+      and table_name = 'proposals'
+      and column_name = 'public_token'
+  ) then
+    update public.proposals
+    set share_token = public_token
+    where share_token is null
+      and public_token is not null;
+  end if;
+end
+$$;
+
+do $proposal_pricing_upgrade$
+begin
+  if exists (
+    select 1
+    from information_schema.columns
+    where table_schema = 'public'
+      and table_name = 'proposals'
+      and column_name = 'pricing'
+      and udt_name <> 'jsonb'
+  ) then
+    alter table public.proposals
+    alter column pricing type jsonb
+    using case
+      when pricing is null then null
+      else jsonb_build_object('text', '', 'amount', pricing)
+    end;
+  end if;
+end
+$proposal_pricing_upgrade$;
+
 create index if not exists idx_proposals_user_id on public.proposals(user_id);
 create index if not exists idx_proposals_client_id on public.proposals(client_id);
+create index if not exists idx_proposals_status on public.proposals(user_id, status);
+create index if not exists idx_proposals_share_token on public.proposals(share_token) where share_token is not null;
+create index if not exists idx_proposals_templates on public.proposals(user_id, is_template, service_type);
 
 alter table public.proposals enable row level security;
 
@@ -187,6 +235,9 @@ create table if not exists public.invoices (
   updated_at timestamptz not null default timezone('utc'::text, now()),
   unique(user_id, invoice_number)
 );
+
+alter table public.invoices add column if not exists line_items jsonb not null default '[]'::jsonb;
+alter table public.invoices add column if not exists tax_rate numeric(5,2) not null default 0;
 
 create index if not exists idx_invoices_user_id on public.invoices(user_id);
 create index if not exists idx_invoices_client_id on public.invoices(client_id);

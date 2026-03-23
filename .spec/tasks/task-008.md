@@ -33,6 +33,6 @@ Build the proposal system: structured builder with 5 sections, template support,
 - Template picker pre-fills builder from selected template
 
 ## Handoff
-- Tests written: <!-- /task-handoff fills this -->
-- Files changed: <!-- /task-handoff fills this -->
-- Notes for next task: <!-- /task-handoff fills this -->
+- Tests written: `npx.cmd tsc --noEmit`; `npm.cmd run build`
+- Files changed: `app/api/clients/route.ts`, `app/api/proposals/route.ts`, `app/api/proposals/[id]/route.ts`, `app/api/proposals/[id]/send/route.ts`, `app/api/proposals/[id]/accept/route.ts`, `app/api/proposals/view/[token]/route.ts`, `app/(dashboard)/proposals/page.tsx`, `app/(dashboard)/proposals/new/page.tsx`, `app/(dashboard)/proposals/[id]/page.tsx`, `app/proposals/view/[token]/page.tsx`, `components/proposals/ProposalEditor.tsx`, `components/proposals/PublicProposalView.tsx`, `app/api/clients/[id]/route.ts`, `app/(dashboard)/clients/[id]/page.tsx`, `app/api/search/route.ts`, `lib/proposals.ts`, `lib/proposal-schemas.ts`, `lib/supabase/admin.ts`, `lib/db/schema.sql`, `types/index.ts`, `middleware.ts`, `bug-log.md`
+- Notes for next task: Proposal status now advances `sent -> viewed -> accepted`, templates are excluded from the main list by default, public proposal routes depend on `SUPABASE_SERVICE_ROLE_KEY`, and the updated proposal schema (`share_token`, `is_template`, `service_type`, `viewed_at`, `pricing jsonb`) should be applied before end-to-end testing.

@@ -1,5 +1,10 @@
 export type UUID = string;
 
+export interface ProposalPricing {
+  text: string;
+  amount: number | null;
+}
+
 export interface Lead {
   id: UUID;
   user_id: UUID;
@@ -46,14 +51,17 @@ export interface Proposal {
   client_id: UUID;
   lead_id: UUID | null;
   title: string;
+  service_type: string | null;
   problem: string | null;
   solution: string | null;
   scope: string | null;
   timeline: string | null;
-  pricing: number | null;
+  pricing: ProposalPricing | null;
   status: string;
-  public_token: string | null;
+  share_token: string | null;
+  is_template: boolean;
   sent_at: string | null;
+  viewed_at: string | null;
   accepted_at: string | null;
   created_at: string;
   updated_at: string;
@@ -65,6 +73,8 @@ export interface Invoice {
   client_id: UUID;
   proposal_id: UUID | null;
   invoice_number: string;
+  line_items: Array<{ name: string; qty: number; unit_price: number }>;
+  tax_rate: number;
   status: string;
   currency: string;
   subtotal: number;

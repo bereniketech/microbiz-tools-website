@@ -66,7 +66,7 @@ export async function GET(request: NextRequest) {
     id: proposal.id,
     title: proposal.title,
     subtitle: proposal.status,
-    href: "/proposals",
+    href: `/proposals/${proposal.id}`,
   }));
 
   const invoices: SearchItem[] = (invoicesData ?? []).map((invoice) => ({
