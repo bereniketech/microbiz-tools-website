@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
+import { normalizeTaskStatus } from "@/lib/tasks";
 import { createClient } from "@/lib/supabase/server";
 
 const updateClientSchema = z
@@ -198,6 +199,10 @@ export async function GET(_request: NextRequest, context: { params: { id: string
 
   const lastContactAt = client.last_contact_at ?? client.created_at;
   const isCold = new Date(lastContactAt).getTime() < Date.now() - 30 * 24 * 60 * 60 * 1000;
+  const normalizedTasks = (tasks ?? []).map((task) => ({
+    ...task,
+    status: normalizeTaskStatus(task.status),
+  }));
 
   return NextResponse.json({
     data: {
@@ -207,7 +212,7 @@ export async function GET(_request: NextRequest, context: { params: { id: string
       proposals: proposals ?? [],
       invoices: invoiceRows.map(({ payments: _payments, ...invoice }) => invoice),
       payments,
-      tasks: tasks ?? [],
+      tasks: normalizedTasks,
       follow_ups: followUps ?? [],
       timeline,
       stats: {

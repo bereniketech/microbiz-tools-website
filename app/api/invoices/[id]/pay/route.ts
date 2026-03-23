@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 
+import { buildInvoicePaymentCheckTaskTitle } from "@/lib/tasks";
 import { createClient } from "@/lib/supabase/server";
 
 function errorResponse(status: number, code: string, message: string) {
@@ -85,13 +86,13 @@ export async function POST(_request: Request, context: { params: { id: string } 
   await supabase
     .from("tasks")
     .update({
-      status: "done",
+      status: "completed",
       completed_at: paidAt,
     })
     .eq("user_id", user.id)
     .eq("client_id", invoice.client_id)
     .eq("status", "todo")
-    .ilike("title", `Payment check: ${invoice.invoice_number}`)
+    .ilike("title", buildInvoicePaymentCheckTaskTitle(invoice.invoice_number))
     .ilike("description", `%${invoice.id}%`);
 
   await supabase.from("client_activities").insert({

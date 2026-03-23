@@ -64,7 +64,7 @@ export async function GET() {
         .from("tasks")
         .select("id, title, priority, due_at")
         .eq("user_id", user.id)
-        .neq("status", "done")
+        .not("status", "in", '("done","completed")')
         .gte("due_at", todayStart.toISOString())
         .lte("due_at", todayEnd.toISOString()),
 

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { calculateInvoiceTotals, createInvoiceSchema } from "@/lib/invoice-schemas";
+import { buildInvoicePaymentCheckTaskTitle } from "@/lib/tasks";
 import { createClient } from "@/lib/supabase/server";
 
 function errorResponse(status: number, code: string, message: string, details?: Array<{ field: string; message: string; code: string }>) {
@@ -128,7 +129,7 @@ export async function POST(request: NextRequest) {
   const { error: taskError } = await supabase.from("tasks").insert({
     user_id: user.id,
     client_id: payload.client_id,
-    title: `Payment check: ${payload.invoice_number}`,
+    title: buildInvoicePaymentCheckTaskTitle(payload.invoice_number),
     description: `Auto-generated payment check for invoice ${payload.invoice_number} (${invoice.id}).`,
     status: "todo",
     priority: "medium",

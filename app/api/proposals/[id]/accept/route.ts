@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
 import { createAdminClient } from "@/lib/supabase/admin";
+import { buildProposalFollowUpTaskTitle } from "@/lib/tasks";
 import { createClient } from "@/lib/supabase/server";
 
 const acceptSchema = z.object({
@@ -89,6 +90,18 @@ export async function POST(request: NextRequest, context: { params: { id: string
       metadata: { proposal_id: proposal.id },
     });
 
+    await supabase
+      .from("tasks")
+      .update({
+        status: "completed",
+        completed_at: acceptedAt,
+      })
+      .eq("user_id", user.id)
+      .eq("client_id", proposal.client_id)
+      .eq("status", "todo")
+      .ilike("title", buildProposalFollowUpTaskTitle(proposal.title))
+      .ilike("description", `%${proposal.id}%`);
+
     return NextResponse.json({ data: proposal });
   }
 
@@ -115,6 +128,18 @@ export async function POST(request: NextRequest, context: { params: { id: string
     message: `Proposal accepted: ${proposal.title}`,
     metadata: { proposal_id: proposal.id, source: "public_share" },
   });
+
+  await admin!
+    .from("tasks")
+    .update({
+      status: "completed",
+      completed_at: acceptedAt,
+    })
+    .eq("user_id", proposal.user_id)
+    .eq("client_id", proposal.client_id)
+    .eq("status", "todo")
+    .ilike("title", buildProposalFollowUpTaskTitle(proposal.title))
+    .ilike("description", `%${proposal.id}%`);
 
   return NextResponse.json({ data: proposal });
 }

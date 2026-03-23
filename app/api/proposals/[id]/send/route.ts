@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { buildProposalFollowUpTaskTitle } from "@/lib/tasks";
 import { createClient } from "@/lib/supabase/server";
 
 function errorResponse(status: number, code: string, message: string) {
@@ -69,6 +70,8 @@ export async function POST(_request: Request, context: { params: { id: string } 
     return errorResponse(500, "proposal_send_failed", "Could not send proposal");
   }
 
+  const followUpDueAt = addDays(new Date(), 3).toISOString();
+
   const { data: existingFollowUp } = await supabase
     .from("follow_ups")
     .select("id")
@@ -83,13 +86,41 @@ export async function POST(_request: Request, context: { params: { id: string } 
       client_id: proposal.client_id,
       proposal_id: proposal.id,
       status: "due",
-      due_at: addDays(new Date(), 3).toISOString(),
+      due_at: followUpDueAt,
       channel: "email",
       message: `Follow up on proposal: ${proposal.title}`,
     });
 
     if (followUpError) {
       return errorResponse(500, "follow_up_create_failed", "Proposal was sent but the follow-up could not be created");
+    }
+  }
+
+  const proposalTaskTitle = buildProposalFollowUpTaskTitle(proposal.title);
+
+  const { data: existingTask } = await supabase
+    .from("tasks")
+    .select("id")
+    .eq("user_id", user.id)
+    .eq("client_id", proposal.client_id)
+    .ilike("title", proposalTaskTitle)
+    .ilike("description", `%${proposal.id}%`)
+    .limit(1)
+    .maybeSingle();
+
+  if (!existingTask) {
+    const { error: taskError } = await supabase.from("tasks").insert({
+      user_id: user.id,
+      client_id: proposal.client_id,
+      title: proposalTaskTitle,
+      description: `Auto-generated proposal follow-up for proposal ${proposal.title} (${proposal.id}).`,
+      status: "todo",
+      priority: "high",
+      due_at: followUpDueAt,
+    });
+
+    if (taskError) {
+      return errorResponse(500, "task_create_failed", "Proposal was sent but the follow-up task could not be created");
     }
   }
 

@@ -31,6 +31,6 @@ Build the tasks module. Tasks are linked to clients, have priorities and due dat
 - Completed tasks move out of active sections
 
 ## Handoff
-- Tests written: <!-- /task-handoff fills this -->
-- Files changed: <!-- /task-handoff fills this -->
-- Notes for next task: <!-- /task-handoff fills this -->
+- Tests written: `get_errors` on changed task-010 files; `npx.cmd tsc --noEmit`; `npm.cmd run build` (lint command is not yet usable because Next.js prompts for initial ESLint setup and the generated dependency pair conflicts on this repo state)
+- Files changed: `app/api/tasks/route.ts`, `app/api/tasks/[id]/route.ts`, `app/(dashboard)/tasks/page.tsx`, `components/tasks/TasksBoard.tsx`, `lib/task-schemas.ts`, `lib/tasks.ts`, `app/api/proposals/[id]/send/route.ts`, `app/api/proposals/[id]/accept/route.ts`, `app/api/invoices/route.ts`, `app/api/invoices/[id]/pay/route.ts`, `app/api/dashboard/route.ts`, `app/api/clients/[id]/route.ts`, `components/ui/button.tsx`, `bug-log.md`
+- Notes for next task: Tasks now load through dedicated `/api/tasks` routes with grouped dashboard UI, manual create/complete flows, client timeline logging on completion, invoice payment-check tasks normalized to `completed`, and proposal send/accept now create and close a matching proposal follow-up task so task automation appears in the tasks module consistently.
