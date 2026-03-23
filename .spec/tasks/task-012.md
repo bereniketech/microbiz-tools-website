@@ -31,6 +31,6 @@ Build the analytics page with a proposal conversion funnel, key metrics, and an 
 - Page renders correctly with zero data (empty state)
 
 ## Handoff
-- Tests written: <!-- /task-handoff fills this -->
-- Files changed: <!-- /task-handoff fills this -->
-- Notes for next task: <!-- /task-handoff fills this -->
+- Tests written: `get_errors` (workspace, no errors), `npx.cmd tsc --noEmit` (passes), `npm.cmd run build` (intermittent Next.js ENOENT on `.next/server/pages-manifest.json` in this environment despite successful compile + type/lint phase)
+- Files changed: `app/api/analytics/route.ts`, `components/dashboard/ProposalFunnelChart.tsx`, `app/(dashboard)/analytics/page.tsx`
+- Notes for next task: Analytics module is now live with status-based proposal funnel, rounded reply/close rates, service-type close-rate breakdown, and conditional insight callouts (best-performing service and low follow-up warning). Page includes explicit empty states for zero proposal/service data and a resilient API fetch fallback.
