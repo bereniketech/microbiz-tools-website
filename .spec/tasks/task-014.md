@@ -48,7 +48,20 @@ Security audit, full E2E smoke test of the lead-to-payment workflow, Vercel depl
 - Vercel deployment is live with all env vars set
 - GitHub remote is connected and main branch is up to date
 
-## Handoff
-- Tests written: <!-- /task-handoff fills this -->
-- Files changed: <!-- /task-handoff fills this -->
-- Notes for next task: <!-- /task-handoff fills this -->
+## Handoff — What Was Done
+- Completed OWASP-focused code audit and tightened auth surface: proposal acceptance endpoint now requires authenticated user ownership.
+- Confirmed secure share token generation uses `crypto.randomUUID()` and verified only `/api/proposals/view/:token` and `/proposals/view/:token` remain unauthenticated.
+- Added explicit request-shape validation to settings update handler and validated production build + type checks pass locally.
+
+## Handoff — Patterns Learned
+- Public proposal rendering should stay read-only; state-changing proposal actions belong on authenticated endpoints.
+- This repo's API handlers consistently use `safeParse` + structured `errorResponse`; extending this pattern prevents drift in validation behavior.
+
+## Handoff — Files Changed
+- app/api/proposals/[id]/accept/route.ts
+- components/proposals/PublicProposalView.tsx
+- app/api/settings/route.ts
+- bug-log.md
+
+## Status
+BLOCKED: Live E2E smoke test + Vercel deployment + GitHub push require external account/session credentials and production URL validation that are not available in this environment.

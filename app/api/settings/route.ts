@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 
 import { createClient } from "@/lib/supabase/server";
 
@@ -8,6 +9,13 @@ interface SettingsPayload {
   brand_name?: string | null;
   brand_logo_url?: string | null;
 }
+
+const settingsPayloadSchema = z.object({
+  currency: z.string().optional(),
+  timezone: z.string().optional(),
+  brand_name: z.string().nullable().optional(),
+  brand_logo_url: z.string().nullable().optional(),
+});
 
 function errorResponse(status: number, code: string, message: string) {
   return NextResponse.json(
@@ -123,7 +131,13 @@ export async function PUT(request: NextRequest) {
     return errorResponse(400, "invalid_json", "Malformed JSON body");
   }
 
-  const payload = (rawBody ?? {}) as SettingsPayload;
+  const parsed = settingsPayloadSchema.safeParse(rawBody ?? {});
+
+  if (!parsed.success) {
+    return errorResponse(422, "validation_error", "Request validation failed");
+  }
+
+  const payload = parsed.data as SettingsPayload;
 
   const currency = normalizeCurrency(payload.currency);
   const timezone = normalizeTimezone(payload.timezone);

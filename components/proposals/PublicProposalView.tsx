@@ -73,9 +73,12 @@ export function PublicProposalView({ token }: { token: string }) {
     try {
       const response = await fetch(`/api/proposals/${proposal.id}/accept`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ share_token: token }),
       });
+
+      if (response.status === 401) {
+        setError("Sign in to accept this proposal.");
+        return;
+      }
 
       if (!response.ok) {
         setError("Proposal could not be accepted.");
