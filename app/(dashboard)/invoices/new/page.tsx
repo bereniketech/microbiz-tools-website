@@ -256,7 +256,7 @@ export default function NewInvoicePage() {
                 onChange={(event) => updateLineItem(index, "unit_price", event.target.value)}
                 placeholder="Unit price"
               />
-              <Button type="button" variant="ghost" onClick={() => removeLineItem(index)}>
+              <Button type="button" variant="outline" size="sm" onClick={() => removeLineItem(index)}>
                 Remove
               </Button>
             </div>

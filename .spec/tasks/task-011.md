@@ -29,6 +29,6 @@ Build the income tracker page showing monthly earned, pending, and a 6-month lin
 - After marking an invoice paid (task-009), income page reflects the new total on next load (no stale data)
 
 ## Handoff
-- Tests written: <!-- /task-handoff fills this -->
-- Files changed: <!-- /task-handoff fills this -->
-- Notes for next task: <!-- /task-handoff fills this -->
+- Tests written: `npx.cmd tsc --noEmit` (pass), `npm.cmd run build` (fails in this environment with intermittent Next.js ENOENT on `.next/server/pages-manifest.json` after compile)
+- Files changed: `app/api/income/route.ts`, `app/(dashboard)/income/page.tsx`, `components/dashboard/IncomeHistoryChart.tsx`, `app/(dashboard)/invoices/new/page.tsx`, `package.json`, `package-lock.json`
+- Notes for next task: Income page now reads from `/api/income` and pay endpoint already calls `revalidatePath('/income')`; if build ENOENT recurs, clear `.next` and rerun build in a clean terminal session.
