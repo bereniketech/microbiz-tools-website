@@ -3,7 +3,9 @@
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 
+import { useUserSettings } from "@/components/layout/UserSettingsProvider";
 import { buttonVariants } from "@/components/ui/button";
+import { formatDate } from "@/lib/utils/formatters";
 import { cn } from "@/lib/utils";
 import { formatCurrency, formatProposalStatus, getProposalPricingAmount } from "@/lib/proposals";
 
@@ -26,6 +28,7 @@ function getClientName(clients: ProposalListItem["clients"]) {
 }
 
 export default function ProposalsPage() {
+  const { settings } = useUserSettings();
   const [selectedFilter, setSelectedFilter] = useState<(typeof FILTERS)[number]>("all");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -113,7 +116,7 @@ export default function ProposalsPage() {
                   <td className="px-4 py-2">{proposal.service_type ?? "-"}</td>
                   <td className="px-4 py-2">{formatCurrency(getProposalPricingAmount(proposal.pricing))}</td>
                   <td className="px-4 py-2">{formatProposalStatus(proposal.status)}</td>
-                  <td className="px-4 py-2">{new Date(proposal.sent_at ?? proposal.created_at).toLocaleDateString()}</td>
+                  <td className="px-4 py-2">{formatDate(proposal.sent_at ?? proposal.created_at, settings.timezone)}</td>
                   <td className="px-4 py-2">
                     <Link href={`/proposals/${proposal.id}`} className={cn(buttonVariants({ variant: "outline", size: "sm" }))}>
                       Open

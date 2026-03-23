@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { buildProposalSharePath, formatCurrency, formatProposalStatus, getProposalPricingAmount, getProposalPricingText } from "@/lib/proposals";
+import { formatDate } from "@/lib/utils/formatters";
 
 interface PublicProposal {
   id: string;
@@ -160,7 +161,11 @@ export function PublicProposalView({ token }: { token: string }) {
 
           <div>
             <p className="text-xs uppercase tracking-wide text-muted-foreground">Viewed</p>
-            <p className="mt-1 text-sm text-muted-foreground">{proposal.viewed_at ? new Date(proposal.viewed_at).toLocaleString() : "Just opened"}</p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {proposal.viewed_at
+                ? formatDate(proposal.viewed_at, "UTC", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" })
+                : "Just opened"}
+            </p>
           </div>
 
           <Button onClick={acceptProposal} disabled={isAccepting || proposal.status === "accepted"}>

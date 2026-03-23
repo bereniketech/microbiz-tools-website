@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import type { IncomeData } from "@/app/api/income/route";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { IncomeHistoryChart } from "@/components/dashboard/IncomeHistoryChart";
+import { formatCurrency } from "@/lib/utils/formatters";
 
 async function getIncomeData(): Promise<IncomeData | null> {
   const headersList = headers();
@@ -21,10 +22,6 @@ async function getIncomeData(): Promise<IncomeData | null> {
 
   const payload = (await response.json()) as { data: IncomeData };
   return payload.data;
-}
-
-function formatCurrency(amount: number) {
-  return amount.toLocaleString("en-US", { style: "currency", currency: "USD" });
 }
 
 export default async function IncomePage() {
@@ -52,7 +49,7 @@ export default async function IncomePage() {
             <CardTitle className="text-base font-semibold">Earned this month</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-bold text-success">{formatCurrency(income.monthEarned)}</p>
+            <p className="text-3xl font-bold text-success">{formatCurrency(income.monthEarned, income.currency)}</p>
           </CardContent>
         </Card>
         <Card>
@@ -60,7 +57,7 @@ export default async function IncomePage() {
             <CardTitle className="text-base font-semibold">Pending</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-bold text-warning">{formatCurrency(income.pendingTotal)}</p>
+            <p className="text-3xl font-bold text-warning">{formatCurrency(income.pendingTotal, income.currency)}</p>
           </CardContent>
         </Card>
       </div>
@@ -70,7 +67,7 @@ export default async function IncomePage() {
           <CardTitle className="text-base font-semibold">Last 6 months income</CardTitle>
         </CardHeader>
         <CardContent>
-          <IncomeHistoryChart history={income.history} />
+          <IncomeHistoryChart history={income.history} currency={income.currency} />
         </CardContent>
       </Card>
     </section>

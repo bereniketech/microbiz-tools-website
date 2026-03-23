@@ -17,7 +17,7 @@ When implementing tasks, read these files for detailed coding standards:
 ## Active Feature
 Feature: initial build
 Tasks: .spec/tasks/
-Current task: .spec/tasks/task-010.md
+Current task: .spec/tasks/task-014.md
 Branch: main
 
 ## Autonomous Loop — Begin Immediately on Session Start

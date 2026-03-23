@@ -43,10 +43,11 @@ export default async function DashboardPage() {
         followUps={data.followUps}
         tasks={data.tasks}
         overdueInvoices={data.overdueInvoices}
+        currency={data.settings.currency}
       />
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <PipelineWidget pipeline={data.pipeline} />
-        <MoneyWidget income={data.income} />
+        <MoneyWidget income={data.income} currency={data.settings.currency} />
       </div>
       <QuickActions />
     </div>

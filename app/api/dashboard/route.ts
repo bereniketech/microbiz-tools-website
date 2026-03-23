@@ -26,6 +26,10 @@ export interface DashboardData {
     monthEarned: number;
     pendingTotal: number;
   };
+  settings: {
+    currency: string;
+    timezone: string;
+  };
 }
 
 export async function GET() {
@@ -48,7 +52,7 @@ export async function GET() {
   monthStart.setDate(1);
   monthStart.setHours(0, 0, 0, 0);
 
-  const [followUpsResult, tasksResult, overdueInvoicesResult, leadsResult, paymentsResult, pendingResult] =
+  const [followUpsResult, tasksResult, overdueInvoicesResult, leadsResult, paymentsResult, pendingResult, settingsResult] =
     await Promise.all([
       // Follow-ups due today (not completed)
       supabase
@@ -92,6 +96,12 @@ export async function GET() {
         .select("total_amount")
         .eq("user_id", user.id)
         .eq("status", "pending"),
+
+      supabase
+        .from("settings")
+        .select("currency, timezone")
+        .eq("user_id", user.id)
+        .maybeSingle(),
     ]);
 
   // Pipeline counts
@@ -131,6 +141,10 @@ export async function GET() {
     income: {
       monthEarned,
       pendingTotal,
+    },
+    settings: {
+      currency: settingsResult.data?.currency ?? "USD",
+      timezone: settingsResult.data?.timezone ?? "UTC",
     },
   };
 

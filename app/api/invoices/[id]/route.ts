@@ -33,7 +33,7 @@ export async function GET(_request: NextRequest, context: { params: { id: string
 
   const [{ data: invoice, error: invoiceError }, { data: setting }] = await Promise.all([
     supabase.from("invoices").select(DETAIL_SELECT).eq("id", id).eq("user_id", user.id).single(),
-    supabase.from("settings").select("currency, brand_name, brand_logo_url").eq("user_id", user.id).maybeSingle(),
+    supabase.from("settings").select("currency, timezone, brand_name, brand_logo_url").eq("user_id", user.id).maybeSingle(),
   ]);
 
   if (invoiceError || !invoice) {
@@ -45,6 +45,7 @@ export async function GET(_request: NextRequest, context: { params: { id: string
       ...invoice,
       branding: {
         currency: setting?.currency ?? invoice.currency,
+        timezone: setting?.timezone ?? "UTC",
         brand_name: setting?.brand_name ?? null,
         brand_logo_url: setting?.brand_logo_url ?? null,
       },

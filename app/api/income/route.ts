@@ -12,6 +12,8 @@ export interface IncomeData {
   monthEarned: number;
   pendingTotal: number;
   history: IncomeHistoryPoint[];
+  currency: string;
+  timezone: string;
 }
 
 function errorResponse(status: number, code: string, message: string) {
@@ -31,7 +33,7 @@ function monthKey(date: Date) {
   return `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, "0")}`;
 }
 
-function buildHistorySkeleton() {
+function buildHistorySkeleton(timezone: string) {
   const currentMonth = new Date();
   currentMonth.setUTCDate(1);
   currentMonth.setUTCHours(0, 0, 0, 0);
@@ -42,7 +44,7 @@ function buildHistorySkeleton() {
 
     return {
       key: monthKey(month),
-      label: month.toLocaleDateString("en-US", { month: "short", year: "2-digit", timeZone: "UTC" }),
+      label: new Intl.DateTimeFormat("en-US", { month: "short", year: "2-digit", timeZone: timezone || "UTC" }).format(month),
       total: 0,
     };
   });
@@ -66,7 +68,7 @@ export async function GET() {
   const historyStart = new Date(thisMonthStart);
   historyStart.setUTCMonth(thisMonthStart.getUTCMonth() - 5);
 
-  const [paymentsResult, pendingResult] = await Promise.all([
+  const [paymentsResult, pendingResult, settingsResult] = await Promise.all([
     supabase
       .from("payments")
       .select("amount, paid_at")
@@ -77,6 +79,11 @@ export async function GET() {
       .select("total_amount")
       .eq("user_id", user.id)
       .eq("status", "pending"),
+    supabase
+      .from("settings")
+      .select("currency, timezone")
+      .eq("user_id", user.id)
+      .maybeSingle(),
   ]);
 
   if (paymentsResult.error) {
@@ -87,7 +94,9 @@ export async function GET() {
     return errorResponse(500, "income_pending_failed", "Could not load pending invoices");
   }
 
-  const history = buildHistorySkeleton();
+  const timezone = settingsResult.data?.timezone ?? "UTC";
+  const currency = settingsResult.data?.currency ?? "USD";
+  const history = buildHistorySkeleton(timezone);
   const historyMap = new Map(history.map((point) => [point.key, point]));
   const currentMonthKey = monthKey(thisMonthStart);
 
@@ -113,6 +122,8 @@ export async function GET() {
     monthEarned,
     pendingTotal,
     history,
+    currency,
+    timezone,
   };
 
   return NextResponse.json({ data });

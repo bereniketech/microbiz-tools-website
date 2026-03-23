@@ -3,8 +3,10 @@
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 
+import { useUserSettings } from "@/components/layout/UserSettingsProvider";
 import { QuickAddLeadModal } from "@/components/leads/QuickAddLeadModal";
 import { buttonVariants } from "@/components/ui/button";
+import { formatCurrency, formatDate } from "@/lib/utils/formatters";
 import { cn } from "@/lib/utils";
 
 interface LeadListItem {
@@ -28,14 +30,9 @@ const FILTERS = [
   { label: "All", value: "all" },
 ] as const;
 
-function formatMoney(value: number | null): string {
+function formatMoney(value: number | null, currency: string): string {
   if (value === null) return "-";
-
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-  }).format(Number(value));
+  return formatCurrency(Number(value), currency, { maximumFractionDigits: 0 });
 }
 
 function contactLabel(lead: LeadListItem): string {
@@ -43,6 +40,7 @@ function contactLabel(lead: LeadListItem): string {
 }
 
 export default function LeadsPage() {
+  const { settings } = useUserSettings();
   const [selectedFilter, setSelectedFilter] = useState<(typeof FILTERS)[number]["value"]>("active");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -128,9 +126,9 @@ export default function LeadsPage() {
                   <td className="px-4 py-2 font-medium">{lead.name}</td>
                   <td className="px-4 py-2">{contactLabel(lead)}</td>
                   <td className="px-4 py-2">{lead.service_needed ?? "-"}</td>
-                  <td className="px-4 py-2">{formatMoney(lead.estimated_value)}</td>
+                  <td className="px-4 py-2">{formatMoney(lead.estimated_value, settings.currency)}</td>
                   <td className="px-4 py-2 capitalize">{lead.stage.replaceAll("_", " ")}</td>
-                  <td className="px-4 py-2">{new Date(lead.created_at).toLocaleDateString()}</td>
+                  <td className="px-4 py-2">{formatDate(lead.created_at, settings.timezone)}</td>
                   <td className="px-4 py-2">
                     <Link href={`/leads/${lead.id}`} className={cn(buttonVariants({ variant: "outline", size: "sm" }))}>
                       Open

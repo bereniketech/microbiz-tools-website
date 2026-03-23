@@ -1,5 +1,7 @@
-import { Document, Font, Page, StyleSheet, Text, View } from "@react-pdf/renderer";
+import { Document, Font, Image, Page, StyleSheet, Text, View } from "@react-pdf/renderer";
 import type { ReactElement } from "react";
+
+import { formatCurrency, formatDate } from "@/lib/utils/formatters";
 
 Font.register({
   family: "Helvetica",
@@ -26,6 +28,16 @@ const styles = StyleSheet.create({
   brand: {
     fontSize: 22,
     fontWeight: 700,
+  },
+  brandRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  logo: {
+    width: 44,
+    height: 44,
+    objectFit: "contain",
   },
   muted: {
     marginTop: 4,
@@ -104,9 +116,11 @@ export interface InvoicePdfData {
   issuedAt: string | null;
   dueDate: string | null;
   currency: string;
+  timezone?: string;
   clientName: string;
   clientEmail?: string | null;
   brandName?: string | null;
+  brandLogoUrl?: string | null;
   lineItems: PdfLineItem[];
   subtotal: number;
   taxRate: number;
@@ -114,24 +128,17 @@ export interface InvoicePdfData {
   totalAmount: number;
 }
 
-function formatCurrency(amount: number, currency: string) {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency,
-  }).format(amount);
-}
-
-function formatDate(value: string | null) {
-  if (!value) return "-";
-  return new Date(value).toLocaleDateString();
-}
-
 export function renderInvoicePdf(data: InvoicePdfData): ReactElement {
+  const timezone = data.timezone ?? "UTC";
+
   return (
     <Document>
       <Page size="A4" style={styles.page}>
         <View style={styles.header}>
-          <Text style={styles.brand}>{data.brandName || "Business"}</Text>
+          <View style={styles.brandRow}>
+            <Text style={styles.brand}>{data.brandName || "Business"}</Text>
+            {data.brandLogoUrl ? <Image style={styles.logo} src={data.brandLogoUrl} /> : null}
+          </View>
           <Text style={styles.muted}>Invoice {data.invoiceNumber}</Text>
           <Text style={styles.muted}>Status: {data.status}</Text>
         </View>
@@ -144,8 +151,8 @@ export function renderInvoicePdf(data: InvoicePdfData): ReactElement {
 
         <View style={styles.section}>
           <Text style={styles.label}>Dates</Text>
-          <Text style={styles.value}>Issued: {formatDate(data.issuedAt)}</Text>
-          <Text style={styles.value}>Due: {formatDate(data.dueDate)}</Text>
+          <Text style={styles.value}>Issued: {formatDate(data.issuedAt, timezone)}</Text>
+          <Text style={styles.value}>Due: {formatDate(data.dueDate, timezone)}</Text>
         </View>
 
         <View style={styles.table}>

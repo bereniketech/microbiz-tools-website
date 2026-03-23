@@ -3,9 +3,11 @@
 import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
+import { useUserSettings } from "@/components/layout/UserSettingsProvider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { formatCurrency, formatDate } from "@/lib/utils/formatters";
 
 interface FollowUpItem {
   id: string;
@@ -31,6 +33,7 @@ interface LeadDetail {
 const STAGE_OPTIONS = ["new", "contacted", "proposal", "negotiation", "converted"];
 
 export default function LeadDetailPage() {
+  const { settings } = useUserSettings();
   const params = useParams<{ id: string }>();
   const router = useRouter();
   const leadId = params.id;
@@ -148,7 +151,9 @@ export default function LeadDetailPage() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold">{lead.name}</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Created {new Date(lead.created_at).toLocaleString()}</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Created {formatDate(lead.created_at, settings.timezone, { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" })}
+          </p>
         </div>
 
         <Button variant="outline" onClick={() => router.push("/leads")}>Back to leads</Button>
@@ -164,7 +169,7 @@ export default function LeadDetailPage() {
             Estimated Value:{" "}
             {lead.estimated_value === null
               ? "-"
-              : new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(Number(lead.estimated_value))}
+              : formatCurrency(Number(lead.estimated_value), settings.currency)}
           </p>
         </div>
 
@@ -223,7 +228,9 @@ export default function LeadDetailPage() {
             {lead.follow_ups.map((item) => (
               <li key={item.id} className="rounded-md border p-3 text-sm">
                 <p className="font-medium capitalize">{item.status}</p>
-                <p className="text-muted-foreground">Due: {new Date(item.due_at).toLocaleString()}</p>
+                <p className="text-muted-foreground">
+                  Due: {formatDate(item.due_at, settings.timezone, { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" })}
+                </p>
                 <p className="text-muted-foreground">Channel: {item.channel ?? "-"}</p>
                 <p>{item.message ?? "No message"}</p>
               </li>

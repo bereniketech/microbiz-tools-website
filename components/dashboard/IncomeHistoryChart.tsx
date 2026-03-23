@@ -3,16 +3,14 @@
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 import type { IncomeData } from "@/app/api/income/route";
+import { formatCurrency } from "@/lib/utils/formatters";
 
 interface IncomeHistoryChartProps {
   history: IncomeData["history"];
+  currency: string;
 }
 
-function formatCurrency(amount: number) {
-  return amount.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
-}
-
-export function IncomeHistoryChart({ history }: IncomeHistoryChartProps) {
+export function IncomeHistoryChart({ history, currency }: IncomeHistoryChartProps) {
   return (
     <div className="h-72 w-full">
       <ResponsiveContainer width="100%" height="100%">
@@ -24,11 +22,11 @@ export function IncomeHistoryChart({ history }: IncomeHistoryChartProps) {
             axisLine={false}
             stroke="hsl(var(--muted-foreground))"
             fontSize={12}
-            tickFormatter={(value) => formatCurrency(Number(value ?? 0))}
+            tickFormatter={(value) => formatCurrency(Number(value ?? 0), currency, { maximumFractionDigits: 0 })}
             width={70}
           />
           <Tooltip
-            formatter={(value) => formatCurrency(Number(value ?? 0))}
+            formatter={(value) => formatCurrency(Number(value ?? 0), currency)}
             contentStyle={{
               backgroundColor: "hsl(var(--card))",
               borderColor: "hsl(var(--border))",

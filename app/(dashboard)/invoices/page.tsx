@@ -3,7 +3,9 @@
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 
+import { useUserSettings } from "@/components/layout/UserSettingsProvider";
 import { buttonVariants } from "@/components/ui/button";
+import { formatCurrency, formatDate } from "@/lib/utils/formatters";
 import { cn } from "@/lib/utils";
 
 interface InvoiceListItem {
@@ -18,10 +20,6 @@ interface InvoiceListItem {
 
 const FILTERS = ["all", "pending", "paid", "overdue"] as const;
 
-function formatCurrency(amount: number, currency: string) {
-  return new Intl.NumberFormat("en-US", { style: "currency", currency }).format(amount);
-}
-
 function getClientName(clients: InvoiceListItem["clients"]) {
   if (!clients) return "Unknown client";
   return Array.isArray(clients) ? (clients[0]?.name ?? "Unknown client") : (clients.name ?? "Unknown client");
@@ -34,6 +32,7 @@ function statusChipClass(status: InvoiceListItem["status"]) {
 }
 
 export default function InvoicesPage() {
+  const { settings } = useUserSettings();
   const [selectedFilter, setSelectedFilter] = useState<(typeof FILTERS)[number]>("all");
   const [invoices, setInvoices] = useState<InvoiceListItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -117,8 +116,8 @@ export default function InvoicesPage() {
                 <tr key={invoice.id} className="border-t">
                   <td className="px-4 py-2 font-medium">{invoice.invoice_number}</td>
                   <td className="px-4 py-2">{getClientName(invoice.clients)}</td>
-                  <td className="px-4 py-2">{invoice.due_date ? new Date(invoice.due_date).toLocaleDateString() : "-"}</td>
-                  <td className="px-4 py-2">{formatCurrency(Number(invoice.total_amount), invoice.currency)}</td>
+                  <td className="px-4 py-2">{formatDate(invoice.due_date, settings.timezone)}</td>
+                  <td className="px-4 py-2">{formatCurrency(Number(invoice.total_amount), settings.currency || invoice.currency)}</td>
                   <td className="px-4 py-2">
                     <span className={cn("inline-flex rounded-full border px-2.5 py-0.5 text-xs font-medium capitalize", statusChipClass(invoice.status))}>{invoice.status}</span>
                   </td>

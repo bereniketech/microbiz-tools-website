@@ -1,13 +1,15 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { DashboardData } from "@/app/api/dashboard/route";
+import { formatCurrency } from "@/lib/utils/formatters";
 
 interface PrioritiesWidgetProps {
   followUps: DashboardData["followUps"];
   tasks: DashboardData["tasks"];
   overdueInvoices: DashboardData["overdueInvoices"];
+  currency: string;
 }
 
-export function PrioritiesWidget({ followUps, tasks, overdueInvoices }: PrioritiesWidgetProps) {
+export function PrioritiesWidget({ followUps, tasks, overdueInvoices, currency }: PrioritiesWidgetProps) {
   const hasItems = followUps.count > 0 || tasks.count > 0 || overdueInvoices.count > 0;
 
   return (
@@ -45,7 +47,7 @@ export function PrioritiesWidget({ followUps, tasks, overdueInvoices }: Prioriti
                   <span className="font-medium">{overdueInvoices.count}</span> overdue invoice
                   {overdueInvoices.count !== 1 ? "s" : ""} —{" "}
                   <span className="font-medium">
-                    ${overdueInvoices.totalAmount.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                    {formatCurrency(overdueInvoices.totalAmount, currency)}
                   </span>{" "}
                   outstanding
                 </span>

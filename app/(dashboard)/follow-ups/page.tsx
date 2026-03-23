@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 
+import { useUserSettings } from "@/components/layout/UserSettingsProvider";
 import { FollowUpCard, type FollowUpItem } from "@/components/followups/FollowUpCard";
 import { SnippetPicker } from "@/components/snippets/SnippetPicker";
 import { Button } from "@/components/ui/button";
@@ -23,6 +24,7 @@ function sortByDueDate(a: FollowUpItem, b: FollowUpItem): number {
 }
 
 export default function FollowUpsPage() {
+  const { settings } = useUserSettings();
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -143,6 +145,7 @@ export default function FollowUpsPage() {
                   <FollowUpCard
                     key={item.id}
                     item={item}
+                    timezone={settings.timezone}
                     isSaving={isSaving}
                     onFollowUp={setSnippetTarget}
                     onSetStatus={updateStatus}
@@ -160,6 +163,7 @@ export default function FollowUpsPage() {
                   <FollowUpCard
                     key={item.id}
                     item={item}
+                    timezone={settings.timezone}
                     isSaving={isSaving}
                     onFollowUp={setSnippetTarget}
                     onSetStatus={updateStatus}
@@ -177,6 +181,7 @@ export default function FollowUpsPage() {
                   <FollowUpCard
                     key={item.id}
                     item={item}
+                    timezone={settings.timezone}
                     isSaving={isSaving}
                     onFollowUp={setSnippetTarget}
                     onSetStatus={updateStatus}
@@ -203,6 +208,7 @@ export default function FollowUpsPage() {
                     <FollowUpCard
                       key={item.id}
                       item={item}
+                      timezone={settings.timezone}
                       isSaving={isSaving}
                       onFollowUp={setSnippetTarget}
                       onSetStatus={updateStatus}

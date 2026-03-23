@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { formatDate } from "@/lib/utils/formatters";
 import { cn } from "@/lib/utils";
 
 type FollowUpStatus = "waiting" | "due" | "replied" | "ghosted";
@@ -20,6 +21,7 @@ export interface FollowUpItem {
 
 interface FollowUpCardProps {
   item: FollowUpItem;
+  timezone: string;
   isSaving: boolean;
   onFollowUp: (item: FollowUpItem) => void;
   onSetStatus: (item: FollowUpItem, nextStatus: FollowUpStatus) => void;
@@ -39,7 +41,7 @@ function statusLabel(status: FollowUpStatus): string {
   return "Replied";
 }
 
-export function FollowUpCard({ item, isSaving, onFollowUp, onSetStatus }: FollowUpCardProps) {
+export function FollowUpCard({ item, timezone, isSaving, onFollowUp, onSetStatus }: FollowUpCardProps) {
   return (
     <article className="rounded-md border bg-card p-3">
       <div className="flex items-start justify-between gap-2">
@@ -51,7 +53,7 @@ export function FollowUpCard({ item, isSaving, onFollowUp, onSetStatus }: Follow
       </div>
 
       <div className="mt-3 text-xs text-muted-foreground">
-        <p>Due: {new Date(item.due_at).toLocaleDateString()}</p>
+        <p>Due: {formatDate(item.due_at, timezone)}</p>
       </div>
 
       <div className="mt-3 flex flex-wrap gap-2">

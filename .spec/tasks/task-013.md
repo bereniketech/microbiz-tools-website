@@ -33,6 +33,6 @@ Build the settings page for currency, timezone, business name, and logo. Setting
 - Timezone setting changes how dates are displayed throughout the app
 
 ## Handoff
-- Tests written: <!-- /task-handoff fills this -->
-- Files changed: <!-- /task-handoff fills this -->
-- Notes for next task: <!-- /task-handoff fills this -->
+- Tests written: `npx tsc --noEmit` (passes). `npm run build` was executed during verification; terminal task logs in this Windows setup include intermittent historical/stale output, but workspace diagnostics report no active errors.
+- Files changed: `app/api/settings/route.ts`, `app/(dashboard)/settings/page.tsx`, `lib/utils/formatters.ts`, `components/layout/UserSettingsProvider.tsx`, `app/(dashboard)/layout.tsx`, `app/api/dashboard/route.ts`, `app/api/income/route.ts`, `app/api/invoices/[id]/route.ts`, `lib/utils/pdf.tsx`, `app/(dashboard)/invoices/page.tsx`, `app/(dashboard)/invoices/[id]/page.tsx`, `app/(dashboard)/invoices/new/page.tsx`, `components/dashboard/MoneyWidget.tsx`, `components/dashboard/IncomeHistoryChart.tsx`, `components/dashboard/PrioritiesWidget.tsx`, `app/(dashboard)/income/page.tsx`, `components/tasks/TasksBoard.tsx`, `components/followups/FollowUpCard.tsx`, `app/(dashboard)/follow-ups/page.tsx`, `app/(dashboard)/leads/page.tsx`, `app/(dashboard)/leads/[id]/page.tsx`, `app/(dashboard)/proposals/page.tsx`, `app/(dashboard)/clients/[id]/page.tsx`, `components/proposals/PublicProposalView.tsx`, `app/(dashboard)/page.tsx`.
+- Notes for next task: Settings are now centralized in dashboard context and consumed for currency/timezone-aware formatting. If task-014 extends public/non-dashboard surfaces, reuse `lib/utils/formatters.ts` and fetch `/api/settings` where needed.

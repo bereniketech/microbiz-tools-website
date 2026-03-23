@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { formatCurrency } from "@/lib/utils/formatters";
 
 interface ClientOption {
   id: string;
@@ -282,19 +283,19 @@ export default function NewInvoicePage() {
           <div className="flex items-center justify-between">
             <span className="text-muted-foreground">Subtotal</span>
             <span>
-              {new Intl.NumberFormat("en-US", { style: "currency", currency }).format(totals.subtotal)}
+              {formatCurrency(totals.subtotal, currency)}
             </span>
           </div>
           <div className="flex items-center justify-between">
             <span className="text-muted-foreground">Tax</span>
             <span>
-              {new Intl.NumberFormat("en-US", { style: "currency", currency }).format(totals.taxAmount)}
+              {formatCurrency(totals.taxAmount, currency)}
             </span>
           </div>
           <div className="flex items-center justify-between border-t pt-2 text-base font-semibold">
             <span>Total</span>
             <span>
-              {new Intl.NumberFormat("en-US", { style: "currency", currency }).format(totals.total)}
+              {formatCurrency(totals.total, currency)}
             </span>
           </div>
         </div>

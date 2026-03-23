@@ -6,6 +6,8 @@ import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { Button, buttonVariants } from "@/components/ui/button";
+import { useUserSettings } from "@/components/layout/UserSettingsProvider";
+import { formatCurrency, formatDate } from "@/lib/utils/formatters";
 import { renderInvoicePdf } from "@/lib/utils/pdf";
 import { cn } from "@/lib/utils";
 
@@ -31,18 +33,10 @@ interface InvoiceDetail {
   clients?: { name: string | null; email: string | null } | Array<{ name: string | null; email: string | null }> | null;
   branding?: {
     currency?: string;
+    timezone?: string;
     brand_name?: string | null;
     brand_logo_url?: string | null;
   };
-}
-
-function formatCurrency(amount: number, currency: string) {
-  return new Intl.NumberFormat("en-US", { style: "currency", currency }).format(amount);
-}
-
-function formatDate(value: string | null) {
-  if (!value) return "-";
-  return new Date(value).toLocaleDateString();
 }
 
 function statusBadgeClass(status: InvoiceDetail["status"]) {
@@ -57,6 +51,7 @@ function getClientRecord(clients: InvoiceDetail["clients"]) {
 }
 
 export default function InvoiceDetailPage() {
+  const { settings } = useUserSettings();
   const params = useParams<{ id: string }>();
   const router = useRouter();
   const [invoice, setInvoice] = useState<InvoiceDetail | null>(null);
@@ -92,6 +87,8 @@ export default function InvoiceDetailPage() {
   }, [loadInvoice]);
 
   const client = useMemo(() => getClientRecord(invoice?.clients), [invoice?.clients]);
+  const displayCurrency = invoice?.branding?.currency ?? invoice?.currency ?? settings.currency;
+  const displayTimezone = invoice?.branding?.timezone ?? settings.timezone;
 
   async function markPaid() {
     if (!invoice || invoice.status === "paid") return;
@@ -129,10 +126,12 @@ export default function InvoiceDetailPage() {
         status: invoice.status,
         issuedAt: invoice.issued_at,
         dueDate: invoice.due_date,
-        currency: invoice.currency,
+        currency: displayCurrency,
+        timezone: displayTimezone,
         clientName: client?.name ?? "Client",
         clientEmail: client?.email,
-        brandName: invoice.branding?.brand_name ?? "MicroBiz Toolbox",
+        brandName: invoice.branding?.brand_name ?? settings.brand_name ?? "MicroBiz Toolbox",
+        brandLogoUrl: invoice.branding?.brand_logo_url ?? settings.brand_logo_url ?? null,
         lineItems: (invoice.line_items ?? []).map((item) => ({
           name: item.name,
           qty: Number(item.qty),
@@ -219,11 +218,11 @@ export default function InvoiceDetailPage() {
         </div>
         <div>
           <p className="text-xs uppercase text-muted-foreground">Issued</p>
-          <p className="mt-1 text-sm">{formatDate(invoice.issued_at)}</p>
+          <p className="mt-1 text-sm">{formatDate(invoice.issued_at, displayTimezone)}</p>
         </div>
         <div>
           <p className="text-xs uppercase text-muted-foreground">Due</p>
-          <p className="mt-1 text-sm">{formatDate(invoice.due_date)}</p>
+          <p className="mt-1 text-sm">{formatDate(invoice.due_date, displayTimezone)}</p>
         </div>
       </div>
 
@@ -242,8 +241,8 @@ export default function InvoiceDetailPage() {
               <tr key={`${item.name}-${index}`} className="border-t">
                 <td className="px-4 py-2">{item.name}</td>
                 <td className="px-4 py-2">{item.qty}</td>
-                <td className="px-4 py-2">{formatCurrency(Number(item.unit_price), invoice.currency)}</td>
-                <td className="px-4 py-2">{formatCurrency(Number(item.qty) * Number(item.unit_price), invoice.currency)}</td>
+                <td className="px-4 py-2">{formatCurrency(Number(item.unit_price), displayCurrency)}</td>
+                <td className="px-4 py-2">{formatCurrency(Number(item.qty) * Number(item.unit_price), displayCurrency)}</td>
               </tr>
             ))}
           </tbody>
@@ -253,15 +252,15 @@ export default function InvoiceDetailPage() {
       <div className="ml-auto w-full max-w-sm space-y-2 rounded-md border p-4 text-sm">
         <div className="flex items-center justify-between">
           <span className="text-muted-foreground">Subtotal</span>
-          <span>{formatCurrency(Number(invoice.subtotal), invoice.currency)}</span>
+          <span>{formatCurrency(Number(invoice.subtotal), displayCurrency)}</span>
         </div>
         <div className="flex items-center justify-between">
           <span className="text-muted-foreground">Tax ({invoice.tax_rate}%)</span>
-          <span>{formatCurrency(Number(invoice.tax_amount), invoice.currency)}</span>
+          <span>{formatCurrency(Number(invoice.tax_amount), displayCurrency)}</span>
         </div>
         <div className="flex items-center justify-between border-t pt-2 text-base font-semibold">
           <span>Total</span>
-          <span>{formatCurrency(Number(invoice.total_amount), invoice.currency)}</span>
+          <span>{formatCurrency(Number(invoice.total_amount), displayCurrency)}</span>
         </div>
       </div>
 

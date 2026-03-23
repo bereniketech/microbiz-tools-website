@@ -3,10 +3,12 @@
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
+import { useUserSettings } from "@/components/layout/UserSettingsProvider";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { formatDate } from "@/lib/utils/formatters";
 import { cn } from "@/lib/utils";
 
 interface ClientOption {
@@ -82,18 +84,6 @@ function sortCompletedTasks(a: TaskItem, b: TaskItem): number {
   return completedB - completedA;
 }
 
-function formatDate(value: string | null): string {
-  if (!value) {
-    return "No due date";
-  }
-
-  return new Date(value).toLocaleDateString(undefined, {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
-}
-
 function toDateInputValue(value: string | null): string {
   if (!value) {
     return "";
@@ -145,6 +135,8 @@ async function parseErrorMessage(response: Response, fallback: string): Promise<
 }
 
 function TaskSection({ title, emptyMessage, tasks, pendingTaskId, onComplete, showCompletedMeta = false }: TaskSectionProps) {
+  const { settings } = useUserSettings();
+
   return (
     <div className="space-y-3 rounded-xl border bg-card/70 p-4">
       <div className="flex items-center justify-between gap-2">
@@ -197,9 +189,9 @@ function TaskSection({ title, emptyMessage, tasks, pendingTaskId, onComplete, sh
                     <span>No linked client</span>
                   )}
 
-                  <span>Due: {formatDate(task.due_at)}</span>
+                  <span>Due: {task.due_at ? formatDate(task.due_at, settings.timezone) : "No due date"}</span>
 
-                  {showCompletedMeta && <span>Completed: {formatDate(task.completed_at)}</span>}
+                  {showCompletedMeta && <span>Completed: {task.completed_at ? formatDate(task.completed_at, settings.timezone) : "-"}</span>}
                 </div>
               </article>
             );

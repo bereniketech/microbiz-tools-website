@@ -4,10 +4,12 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
+import { useUserSettings } from "@/components/layout/UserSettingsProvider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { formatCurrency, getProposalPricingAmount } from "@/lib/proposals";
+import { formatCurrency as formatMoneyValue, formatDate as formatDateValue } from "@/lib/utils/formatters";
 import { cn } from "@/lib/utils";
 
 interface ClientRecord {
@@ -94,19 +96,6 @@ interface PageData {
   };
 }
 
-function formatMoney(value: number, currency = "USD"): string {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency,
-  }).format(Number(value));
-}
-
-function formatDate(value: string | null): string {
-  if (!value) return "-";
-
-  return new Date(value).toLocaleString();
-}
-
 function statusBadgeClass(status: string): string {
   if (["accepted", "paid", "completed"].includes(status)) {
     return "bg-emerald-100 text-emerald-800";
@@ -124,6 +113,7 @@ function statusBadgeClass(status: string): string {
 }
 
 export default function ClientProfilePage() {
+  const { settings } = useUserSettings();
   const params = useParams<{ id: string }>();
   const clientId = params.id;
 
@@ -305,7 +295,9 @@ export default function ClientProfilePage() {
             <Input id="client-company" value={companyName} onChange={(event) => setCompanyName(event.target.value)} placeholder="Company name" />
           </div>
 
-          <p className="text-xs text-muted-foreground">Last contact: {formatDate(data.client.last_contact_at)}</p>
+          <p className="text-xs text-muted-foreground">
+            Last contact: {data.client.last_contact_at ? formatDateValue(data.client.last_contact_at, settings.timezone) : "-"}
+          </p>
 
           <Button onClick={saveContactInfo} disabled={isSavingContact}>{isSavingContact ? "Saving..." : "Save Contact Info"}</Button>
         </div>
@@ -313,7 +305,7 @@ export default function ClientProfilePage() {
         <div className="space-y-3 rounded-md border p-4">
           <h2 className="text-base font-semibold">Payment Status</h2>
           <p className="text-sm text-muted-foreground">Client value</p>
-          <p className="text-2xl font-semibold">{formatMoney(data.stats.client_value)}</p>
+          <p className="text-2xl font-semibold">{formatMoneyValue(data.stats.client_value, settings.currency)}</p>
 
           <div className="grid grid-cols-2 gap-3">
             <div className="rounded-md border p-3">
@@ -333,8 +325,8 @@ export default function ClientProfilePage() {
               {data.payments.map((payment) => (
                 <li key={payment.id} className="rounded-md border p-3 text-sm">
                   <div className="flex items-center justify-between gap-2">
-                    <span className="font-medium">{formatMoney(payment.amount)}</span>
-                    <span className="text-muted-foreground">{formatDate(payment.paid_at)}</span>
+                    <span className="font-medium">{formatMoneyValue(payment.amount, settings.currency)}</span>
+                    <span className="text-muted-foreground">{formatDateValue(payment.paid_at, settings.timezone)}</span>
                   </div>
                   <p className="text-muted-foreground">Invoice: {payment.invoice_number}</p>
                   <p className="text-muted-foreground">Method: {payment.method ?? "-"}</p>
@@ -379,7 +371,7 @@ export default function ClientProfilePage() {
                     </span>
                   </div>
                   <p className="text-muted-foreground">Priority: {task.priority}</p>
-                  <p className="text-muted-foreground">Due: {formatDate(task.due_at)}</p>
+                  <p className="text-muted-foreground">Due: {task.due_at ? formatDateValue(task.due_at, settings.timezone) : "-"}</p>
                 </li>
               ))}
             </ul>
@@ -402,7 +394,7 @@ export default function ClientProfilePage() {
                       {proposal.status}
                     </span>
                   </div>
-                  <p className="text-muted-foreground">Sent: {formatDate(proposal.sent_at)}</p>
+                  <p className="text-muted-foreground">Sent: {proposal.sent_at ? formatDateValue(proposal.sent_at, settings.timezone) : "-"}</p>
                 </li>
               ))}
             </ul>
@@ -423,8 +415,8 @@ export default function ClientProfilePage() {
                       {invoice.status}
                     </span>
                   </div>
-                  <p className="text-muted-foreground">Amount: {formatMoney(invoice.total_amount, invoice.currency)}</p>
-                  <p className="text-muted-foreground">Issued: {formatDate(invoice.issued_at)}</p>
+                  <p className="text-muted-foreground">Amount: {formatMoneyValue(invoice.total_amount, settings.currency || invoice.currency)}</p>
+                  <p className="text-muted-foreground">Issued: {invoice.issued_at ? formatDateValue(invoice.issued_at, settings.timezone) : "-"}</p>
                 </li>
               ))}
             </ul>
@@ -447,7 +439,7 @@ export default function ClientProfilePage() {
                       {item.status}
                     </span>
                   </div>
-                  <p className="text-muted-foreground">Due: {formatDate(item.due_at)}</p>
+                  <p className="text-muted-foreground">Due: {formatDateValue(item.due_at, settings.timezone)}</p>
                   <p className="text-muted-foreground">Channel: {item.channel ?? "-"}</p>
                 </li>
               ))}
@@ -492,7 +484,7 @@ export default function ClientProfilePage() {
               <li key={event.id} className="rounded-md border p-3 text-sm">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <p className="font-medium">{event.message}</p>
-                  <span className="text-muted-foreground">{formatDate(event.happened_at)}</span>
+                  <span className="text-muted-foreground">{formatDateValue(event.happened_at, settings.timezone)}</span>
                 </div>
                 <p className="mt-1 text-xs uppercase tracking-wide text-muted-foreground">{event.type.replaceAll("_", " ")}</p>
               </li>
