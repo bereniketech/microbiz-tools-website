@@ -92,13 +92,6 @@ export default function LeadsClientsPage() {
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Leads &amp; Clients</h1>
         <div className="flex gap-2">
-          <a
-            href="/api/export/csv?type=clients"
-            download
-            className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
-          >
-            Export CSV
-          </a>
           <Link href="/leads/new" className={cn(buttonVariants({ variant: "outline", size: "sm" }))}>
             Add Lead
           </Link>

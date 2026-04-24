@@ -12,6 +12,13 @@ function getAdminClient() {
   return createSupabaseClient(url, key);
 }
 
+function getPeriodEnd(subscription: Stripe.Subscription): string {
+  // In Stripe SDK v22, current_period_end lives on the SubscriptionItem, not the Subscription.
+  const item = subscription.items.data[0];
+  const periodEnd = item?.current_period_end ?? subscription.billing_cycle_anchor;
+  return new Date(periodEnd * 1000).toISOString();
+}
+
 export async function POST(request: NextRequest) {
   const signature = request.headers.get("stripe-signature");
 
@@ -49,12 +56,10 @@ export async function POST(request: NextRequest) {
         const subscription = await stripe.subscriptions.retrieve(session.subscription as string);
         const priceId = subscription.items.data[0]?.price.id;
 
-        // Determine plan from priceId
         let plan = "free";
         if (priceId === process.env.STRIPE_PRO_PLAN_PRICE_ID) plan = "pro";
         if (priceId === process.env.STRIPE_BUSINESS_PLAN_PRICE_ID) plan = "business";
 
-        // Get workspace for user
         const { data: member } = await supabase
           .from("workspace_members")
           .select("workspace_id")
@@ -69,7 +74,7 @@ export async function POST(request: NextRequest) {
             stripe_subscription_id: session.subscription as string,
             plan,
             status: "active",
-            current_period_end: new Date(subscription.billing_cycle_anchor * 1000).toISOString(),
+            current_period_end: getPeriodEnd(subscription),
           }, { onConflict: "workspace_id" });
         }
       }
@@ -99,7 +104,7 @@ export async function POST(request: NextRequest) {
         .update({
           plan,
           status: subscription.status,
-          current_period_end: new Date(subscription.billing_cycle_anchor * 1000).toISOString(),
+          current_period_end: getPeriodEnd(subscription),
         })
         .eq("stripe_customer_id", customerId);
     }

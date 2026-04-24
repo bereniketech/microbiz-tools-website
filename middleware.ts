@@ -73,16 +73,31 @@ export async function middleware(request: NextRequest) {
   }
 
   // Onboarding gate: redirect new users who haven't completed onboarding
-  if (user && isProtectedRoute && !pathname.startsWith("/onboarding")) {
+  if (user && isProtectedRoute) {
     const { data: profile } = await supabase
       .from("profiles")
       .select("onboarding_completed")
       .eq("id", user.id)
       .maybeSingle();
 
-    if (profile && profile.onboarding_completed === false) {
+    if (!profile || profile.onboarding_completed === false) {
       const redirectUrl = request.nextUrl.clone();
       redirectUrl.pathname = "/onboarding";
+      return NextResponse.redirect(redirectUrl);
+    }
+  }
+
+  // If user is on /onboarding but already completed it, redirect to dashboard
+  if (user && pathname.startsWith("/onboarding")) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("onboarding_completed")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    if (profile?.onboarding_completed === true) {
+      const redirectUrl = request.nextUrl.clone();
+      redirectUrl.pathname = "/dashboard";
       return NextResponse.redirect(redirectUrl);
     }
   }
@@ -102,6 +117,8 @@ export const config = {
     "/snippets/:path*",
     "/analytics/:path*",
     "/settings/:path*",
+    "/onboarding/:path*",
+    "/onboarding",
     "/api/search",
   ],
 };
