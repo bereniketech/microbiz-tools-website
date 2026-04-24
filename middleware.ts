@@ -72,6 +72,21 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
+  // Onboarding gate: redirect new users who haven't completed onboarding
+  if (user && isProtectedRoute && !pathname.startsWith("/onboarding")) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("onboarding_completed")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    if (profile && profile.onboarding_completed === false) {
+      const redirectUrl = request.nextUrl.clone();
+      redirectUrl.pathname = "/onboarding";
+      return NextResponse.redirect(redirectUrl);
+    }
+  }
+
   return response;
 }
 

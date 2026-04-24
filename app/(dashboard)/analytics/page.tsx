@@ -2,6 +2,7 @@ import { headers } from "next/headers";
 
 import type { AnalyticsData } from "@/app/api/analytics/route";
 import { ProposalFunnelChart } from "@/components/dashboard/ProposalFunnelChart";
+import { RevenueForecast } from "@/components/analytics/RevenueForecast";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 async function getAnalyticsData(): Promise<AnalyticsData | null> {
@@ -150,6 +151,8 @@ export default async function AnalyticsPage() {
           </CardContent>
         </Card>
       </div>
+
+      <RevenueForecast />
     </section>
   );
 }

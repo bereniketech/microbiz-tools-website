@@ -4,6 +4,8 @@ import type { IncomeData } from "@/app/api/income/route";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { IncomeHistoryChart } from "@/components/dashboard/IncomeHistoryChart";
 import { formatCurrency } from "@/lib/utils/formatters";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 async function getIncomeData(): Promise<IncomeData | null> {
   const headersList = headers();
@@ -38,9 +40,27 @@ export default async function IncomePage() {
 
   return (
     <section className="space-y-4">
-      <div>
-        <h1 className="text-2xl font-semibold">Income</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Track monthly earnings, pending receivables, and trends.</p>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-semibold">Income</h1>
+          <p className="mt-1 text-sm text-muted-foreground">Track monthly earnings, pending receivables, and trends.</p>
+        </div>
+        <div className="flex gap-2">
+          <a
+            href="/api/export/csv?type=income"
+            download
+            className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
+          >
+            Export CSV
+          </a>
+          <a
+            href="/api/export/pdf"
+            download
+            className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
+          >
+            Export PDF
+          </a>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">

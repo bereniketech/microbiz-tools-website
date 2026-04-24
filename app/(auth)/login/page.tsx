@@ -70,7 +70,74 @@ export default function LoginPage() {
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? "Logging in..." : "Log in"}
             </Button>
+
+            <p className="text-center text-sm text-muted-foreground">
+              <Link
+                href="/auth/reset-password"
+                className="underline underline-offset-4 hover:text-foreground"
+              >
+                Forgot password?
+              </Link>
+            </p>
           </form>
+
+          <div className="relative my-4">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-background px-2 text-muted-foreground">or continue with</span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              disabled={isLoading}
+              onClick={async () => {
+                setError(null);
+                setIsLoading(true);
+                const supabase = createClient();
+                const { error: oauthError } = await supabase.auth.signInWithOAuth({
+                  provider: "google",
+                  options: {
+                    redirectTo: `${window.location.origin}/auth/callback`,
+                  },
+                });
+                if (oauthError) {
+                  setError(oauthError.message);
+                  setIsLoading(false);
+                }
+              }}
+            >
+              Google
+            </Button>
+
+            <Button
+              type="button"
+              variant="outline"
+              disabled={isLoading}
+              onClick={async () => {
+                setError(null);
+                setIsLoading(true);
+                const supabase = createClient();
+                const { error: oauthError } = await supabase.auth.signInWithOAuth({
+                  provider: "github",
+                  options: {
+                    redirectTo: `${window.location.origin}/auth/callback`,
+                  },
+                });
+                if (oauthError) {
+                  setError(oauthError.message);
+                  setIsLoading(false);
+                }
+              }}
+            >
+              GitHub
+            </Button>
+          </div>
+
           <p className="mt-4 text-center text-sm text-muted-foreground">
             Need an account? <Link href="/register" className="underline">Create one</Link>
           </p>

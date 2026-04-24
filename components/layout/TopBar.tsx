@@ -6,6 +6,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { NotificationBell } from "@/components/layout/NotificationBell";
 import { createClient } from "@/lib/supabase/client";
 
 interface TopBarProps {
@@ -159,6 +160,7 @@ export function TopBar({ onToggleSidebar }: TopBarProps) {
         </div>
 
         <div className="flex items-center gap-2">
+          <NotificationBell />
           <div className="hidden items-center gap-2 text-sm text-muted-foreground sm:flex">
             <UserCircle2 className="h-4 w-4" />
             <span className="max-w-[220px] truncate">{email ?? "Signed in"}</span>

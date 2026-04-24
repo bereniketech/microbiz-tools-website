@@ -6,6 +6,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { Button, buttonVariants } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useUserSettings } from "@/components/layout/UserSettingsProvider";
 import { formatCurrency, formatDate } from "@/lib/utils/formatters";
 import { renderInvoicePdf } from "@/lib/utils/pdf";
@@ -60,6 +61,10 @@ export default function InvoiceDetailPage() {
   const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [sendEmail, setSendEmail] = useState("");
+  const [isSending, setIsSending] = useState(false);
+  const [sendError, setSendError] = useState<string | null>(null);
+  const [sendSuccess, setSendSuccess] = useState(false);
 
   const loadInvoice = useCallback(async () => {
     setIsLoading(true);
@@ -112,6 +117,21 @@ export default function InvoiceDetailPage() {
     } finally {
       setIsMarkingPaid(false);
     }
+  }
+
+  async function handleSendInvoice() {
+    if (!invoice || !sendEmail) return;
+    setSendError(null);
+    setIsSending(true);
+    const res = await fetch(`/api/invoices/${invoice.id}/send`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ recipientEmail: sendEmail }),
+    });
+    const json = await res.json();
+    setIsSending(false);
+    if (!res.ok) { setSendError(json.error ?? "Failed to send invoice"); return; }
+    setSendSuccess(true);
   }
 
   async function downloadPdf() {
@@ -206,6 +226,21 @@ export default function InvoiceDetailPage() {
 
       {error && <p className="text-sm text-destructive">{error}</p>}
       {success && <p className="text-sm text-emerald-700">{success}</p>}
+
+      <div className="flex flex-wrap gap-2 items-center">
+        <Input
+          type="email"
+          placeholder="recipient@example.com"
+          value={sendEmail}
+          onChange={e => setSendEmail(e.target.value)}
+          className="max-w-xs"
+        />
+        <Button onClick={handleSendInvoice} disabled={isSending || !sendEmail}>
+          {isSending ? "Sending…" : "Send Invoice"}
+        </Button>
+        {sendError && <p className="text-sm text-destructive">{sendError}</p>}
+        {sendSuccess && <p className="text-sm text-emerald-700">Invoice sent!</p>}
+      </div>
 
       <div className="grid gap-4 rounded-md border p-4 md:grid-cols-4">
         <div>

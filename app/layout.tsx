@@ -16,6 +16,8 @@ const geistMono = localFont({
 export const metadata: Metadata = {
   title: "MicroBiz Toolbox",
   description: "Freelancer workflow app from lead to payment.",
+  manifest: "/manifest.json",
+  themeColor: "#111111",
 };
 
 export default function RootLayout({

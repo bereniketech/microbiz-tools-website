@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { formatCurrency } from "@/lib/utils/formatters";
+import { createClient } from "@/lib/supabase/client";
 
 interface ClientOption {
   id: string;
@@ -62,6 +63,9 @@ export default function NewInvoicePage() {
   const [dueDate, setDueDate] = useState(defaultDueDate());
   const [taxRate, setTaxRate] = useState("0");
   const [lineItems, setLineItems] = useState<InvoiceLineItemForm[]>([{ name: "", qty: "1", unit_price: "0" }]);
+  const [isRecurring, setIsRecurring] = useState(false);
+  const [recurringFrequency, setRecurringFrequency] = useState<"weekly" | "monthly" | "quarterly">("monthly");
+  const [recurringEndDate, setRecurringEndDate] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoadingDefaults, setIsLoadingDefaults] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -166,7 +170,37 @@ export default function NewInvoicePage() {
       }
 
       const payload = (await response.json()) as { data: { id: string } };
-      router.replace(`/invoices/${payload.data.id}`);
+      const newInvoiceId = payload.data.id;
+
+      if (isRecurring) {
+        const supabase = createClient();
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { data: member } = await supabase
+            .from("workspace_members")
+            .select("workspace_id")
+            .eq("user_id", user.id)
+            .limit(1)
+            .single();
+
+          if (member?.workspace_id) {
+            const nextDate = new Date();
+            if (recurringFrequency === "weekly") nextDate.setDate(nextDate.getDate() + 7);
+            if (recurringFrequency === "monthly") nextDate.setMonth(nextDate.getMonth() + 1);
+            if (recurringFrequency === "quarterly") nextDate.setMonth(nextDate.getMonth() + 3);
+
+            await supabase.from("recurring_invoice_schedules").insert({
+              workspace_id: member.workspace_id,
+              template_invoice_id: newInvoiceId,
+              frequency: recurringFrequency,
+              next_run_date: nextDate.toISOString().split("T")[0],
+              end_date: recurringEndDate || null,
+            });
+          }
+        }
+      }
+
+      router.replace(`/invoices/${newInvoiceId}`);
     } catch {
       setError("Invoice could not be created.");
     } finally {
@@ -299,6 +333,46 @@ export default function NewInvoicePage() {
             </span>
           </div>
         </div>
+      </div>
+
+      <div className="space-y-3 rounded-lg border p-4">
+        <div className="flex items-center gap-3">
+          <input
+            type="checkbox"
+            id="isRecurring"
+            checked={isRecurring}
+            onChange={e => setIsRecurring(e.target.checked)}
+            className="h-4 w-4"
+          />
+          <Label htmlFor="isRecurring">Make this a recurring invoice</Label>
+        </div>
+
+        {isRecurring && (
+          <div className="grid grid-cols-2 gap-4 pl-7">
+            <div className="space-y-1">
+              <Label htmlFor="frequency">Frequency</Label>
+              <select
+                id="frequency"
+                value={recurringFrequency}
+                onChange={e => setRecurringFrequency(e.target.value as "weekly" | "monthly" | "quarterly")}
+                className="w-full rounded-md border bg-background px-3 py-2 text-sm"
+              >
+                <option value="weekly">Weekly</option>
+                <option value="monthly">Monthly</option>
+                <option value="quarterly">Quarterly</option>
+              </select>
+            </div>
+            <div className="space-y-1">
+              <Label htmlFor="endDate">End date (optional)</Label>
+              <Input
+                id="endDate"
+                type="date"
+                value={recurringEndDate}
+                onChange={e => setRecurringEndDate(e.target.value)}
+              />
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="flex gap-2">

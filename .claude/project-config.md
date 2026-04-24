@@ -1,49 +1,55 @@
 # Project Configuration
 
 ## Skill Library
-- Path: C:/Users/Hp/Desktop/Experiment/claude_kit
+Path: C:/Users/Hp/Desktop/Experiment/claude_kit
 
 ## Selected Skills
-- code-writing-software-development → skills/development/code-writing-software-development
-- continuous-learning → skills/core/continuous-learning
-- strategic-compact → skills/core/strategic-compact
-- autonomous-agents-task-automation → skills/planning/autonomous-agents-task-automation
-- tdd-workflow → skills/testing-quality/tdd-workflow
-- security-review → skills/testing-quality/security-review
-- build-website-web-app → skills/development/build-website-web-app
-- api-design → skills/development/api-design
-- postgres-patterns → skills/data-backend/postgres-patterns
-- database-migrations → skills/data-backend/database-migrations
+- .kit/skills/core/karpathy-principles/SKILL.md
+- .kit/skills/planning/planning-specification-architecture-software/SKILL.md
+- .kit/skills/frameworks-frontend/nextjs-app-router-patterns/SKILL.md
+- .kit/skills/frameworks-frontend/nextjs-supabase-auth/SKILL.md
+- .kit/skills/languages/typescript-pro/SKILL.md
+- .kit/skills/fintech-payments/stripe-integration/SKILL.md
+- .kit/skills/security-defensive/auth-implementation-patterns/SKILL.md
+- .kit/skills/data-backend/postgres-patterns/SKILL.md
+- .kit/skills/development/code-writing-software-development/SKILL.md
+- .kit/skills/testing-quality/tdd-workflow/SKILL.md
+- .kit/skills/_studio/batch-tasks/SKILL.md
+
+## Selected Agents
+- .kit/agents/board/company-coo.md
+- .kit/agents/software-company/software-cto.md
+- .kit/agents/software-company/engineering/web-frontend-expert.md
+- .kit/agents/software-company/engineering/web-backend-expert.md
+- .kit/agents/software-company/engineering/architect.md
+- .kit/agents/software-company/engineering/planner.md
+- .kit/agents/software-company/security/chief-security-officer.md
+- .kit/agents/software-company/product/chief-product-officer.md
+- .kit/agents/software-company/qa/test-expert.md
+
+## Selected Commands
+- .kit/commands/core/ (all 20 commands)
+- .kit/commands/development/code-review.md
+- .kit/commands/development/build-fix.md
+- .kit/commands/development/refactor-clean.md
+- .kit/commands/development/verify.md
+- .kit/commands/testing-quality/tdd.md
+- .kit/commands/testing-quality/quality-gate.md
+- .kit/commands/planning/plan.md
 
 ## Rules Active
-- common
-- typescript
+- .kit/rules/common/ (all 10 rules)
+- .kit/rules/typescript/ (all 5 rules)
 
-## GitHub
-- Repo: https://github.com/bereniketech/microbiz-tools-website.git
-- Branch: main
-- Visibility: TBD
-
-## Hosting
-- Provider: Vercel
-- Domain: none
-
-## CI/CD
-- Pipeline: none
-
-## Database
-- Provider: Supabase (PostgreSQL)
-
-## Auth
-- Provider: Supabase Auth
-
-## Package Manager
-- npm
-
-## Environment Variables
-- GITHUB_PAT
-- NEXT_PUBLIC_SUPABASE_URL
-- NEXT_PUBLIC_SUPABASE_ANON_KEY
-- SUPABASE_SERVICE_ROLE_KEY
-- NEXTAUTH_SECRET
-- NEXTAUTH_URL
+## Stack
+- Framework: Next.js 14 (App Router)
+- Language: TypeScript
+- Auth + DB: Supabase (PostgreSQL + Auth + Storage)
+- Styling: Tailwind CSS + shadcn/ui
+- Charts: Recharts
+- PDF: @react-pdf/renderer
+- Validation: Zod
+- Billing: Stripe (to be added)
+- Email: Resend (to be added)
+- Hosting: Vercel
+- Package Manager: npm

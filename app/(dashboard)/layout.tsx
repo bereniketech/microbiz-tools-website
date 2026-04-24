@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 
 import { DashboardShell } from "@/components/layout/DashboardShell";
+import { EmailVerificationBanner } from "@/components/layout/EmailVerificationBanner";
 import { UserSettingsProvider } from "@/components/layout/UserSettingsProvider";
 import { createClient } from "@/lib/supabase/server";
 
@@ -36,8 +37,12 @@ export default async function DashboardLayout({ children }: { children: ReactNod
     }
   }
 
+  const emailConfirmedAt = user?.email_confirmed_at ?? null;
+  const userEmail = user?.email ?? "";
+
   return (
     <DashboardShell>
+      <EmailVerificationBanner userEmail={userEmail} emailConfirmedAt={emailConfirmedAt} />
       <UserSettingsProvider initialSettings={initialSettings}>{children}</UserSettingsProvider>
     </DashboardShell>
   );

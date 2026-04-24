@@ -73,7 +73,7 @@ export async function GET(request: NextRequest) {
     id: invoice.id,
     title: invoice.invoice_number,
     subtitle: invoice.status,
-    href: "/invoices",
+    href: `/invoices/${invoice.id}`,
   }));
 
   return NextResponse.json({ clients, proposals, invoices });

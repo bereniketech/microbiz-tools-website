@@ -1,0 +1,8 @@
+.kit/
+.spec/
+node_modules/
+dist/
+build/
+.next/
+.env
+.env.*

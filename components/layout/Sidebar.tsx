@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BarChart3, BriefcaseBusiness, CircleDollarSign, ClipboardList, FileText, HandCoins, LayoutDashboard, MessageSquareText, Settings, Users } from "lucide-react";
+import { BarChart3, BriefcaseBusiness, CalendarDays, CircleDollarSign, ClipboardList, FileText, HandCoins, LayoutDashboard, MessageSquareText, Settings, Users } from "lucide-react";
 import type { ComponentType } from "react";
 
 import { cn } from "@/lib/utils";
@@ -22,6 +22,7 @@ export const sidebarItems: SidebarItem[] = [
   { label: "Tasks", href: "/tasks", icon: BriefcaseBusiness },
   { label: "Income", href: "/income", icon: HandCoins },
   { label: "Snippets", href: "/snippets", icon: CircleDollarSign },
+  { label: "Calendar", href: "/calendar", icon: CalendarDays },
   { label: "Analytics", href: "/analytics", icon: BarChart3 },
   { label: "Settings", href: "/settings", icon: Settings },
 ];
