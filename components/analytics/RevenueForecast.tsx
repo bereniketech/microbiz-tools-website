@@ -100,7 +100,7 @@ export function RevenueForecast() {
           <CartesianGrid strokeDasharray="3 3" vertical={false} />
           <XAxis dataKey="month" tick={{ fontSize: 12 }} />
           <YAxis tick={{ fontSize: 12 }} />
-          <Tooltip formatter={(v: number) => [`$${v.toLocaleString()}`, "Projected"]} />
+          <Tooltip formatter={(v) => [`$${Number(v).toLocaleString()}`, "Projected"]} />
           <Bar dataKey="amount" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>

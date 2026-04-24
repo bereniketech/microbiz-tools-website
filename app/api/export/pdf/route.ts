@@ -90,7 +90,7 @@ export async function GET() {
 
   const buffer = await renderToBuffer(pdfDoc);
 
-  return new NextResponse(buffer, {
+  return new NextResponse(buffer as unknown as BodyInit, {
     headers: {
       "Content-Type": "application/pdf",
       "Content-Disposition": `attachment; filename="income-report-${new Date().toISOString().split("T")[0]}.pdf"`,
