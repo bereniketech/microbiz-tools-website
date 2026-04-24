@@ -36,3 +36,6 @@ build/
 # Claude Kit
 .kit/
 .spec/
+
+# Claude local settings (contains secrets)
+.claude/settings.local.json
